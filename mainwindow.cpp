@@ -17,8 +17,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this->ui->button_cursor, SIGNAL( clicked() ), this, SLOT(getNewItems()));
     connect(this->ui->button_grandma, SIGNAL( clicked() ), this, SLOT(getNewItems()));
     connect(this->ui->button_farm, SIGNAL( clicked() ), this, SLOT(getNewItems()));
+    connect(this->ui->button_mine, SIGNAL( clicked() ), this, SLOT(getNewItems()));
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(getAutoCookies()));
+    setGameStatus();
     timer->start(1000); //time specified in ms
 
 }
@@ -45,7 +47,11 @@ void MainWindow::getNewItems() {
     } else if (buttonSender == this->ui->button_farm) {
         name = "Farm";
         item = &farms;
-        item_price = &grangma_prise;
+        item_price = &farm_price;
+    } else if (buttonSender == this->ui->button_mine) {
+        name = "Mine";
+        item = &mines;
+        item_price = &mine_price;
     }
     int repeat = 1;
     if (QApplication::keyboardModifiers().testFlag(Qt::ControlModifier)) {
@@ -73,8 +79,14 @@ void MainWindow::addItem(QPushButton*button_sender, QString name, int* item, int
 
 void MainWindow::getAutoCookies(){
     //printf("Some cookies; timer=%p\n", timer); fflush(stdout);
-    int cookies_per_second = cursors + 5*grandmas + 10*farms;
+    int cookies_per_second = cursors + 5*grandmas + 10*farms + 50*mines;
     cookies = cookies + cookies_per_second;
+    setGameStatus();
+    timer->start(1000); //time specified in ms
+}
+
+void MainWindow::setGameStatus(){
+    int cookies_per_second = cursors + 5*grandmas + 10*farms + 50*mines;
     ui->label->setText("Cookies: " +
                         QString::fromStdString(std::to_string(cookies)) +
                        "\nCursors: " +
@@ -83,7 +95,8 @@ void MainWindow::getAutoCookies(){
                        QString::fromStdString(std::to_string(grandmas)) +
                        "\nFarms: " +
                        QString::fromStdString(std::to_string(farms)) +
+                       "\nMines: " +
+                       QString::fromStdString(std::to_string(mines)) +
                        "\nCookies per second: " +
                        QString::fromStdString(std::to_string(cookies_per_second)));
-    timer->start(1000); //time specified in ms
 }

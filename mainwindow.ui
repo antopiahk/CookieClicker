@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>384</width>
-    <height>351</height>
+    <width>385</width>
+    <height>430</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -36,6 +36,9 @@
       <height>61</height>
      </rect>
     </property>
+    <property name="toolTip">
+     <string>Gives 1 cookie per second.</string>
+    </property>
     <property name="text">
      <string>Buy Cursor : 10</string>
     </property>
@@ -49,6 +52,9 @@
       <height>61</height>
      </rect>
     </property>
+    <property name="toolTip">
+     <string>Gives 5 cookies per second.</string>
+    </property>
     <property name="text">
      <string>Buy Grandma : 25</string>
     </property>
@@ -61,6 +67,9 @@
       <width>171</width>
       <height>61</height>
      </rect>
+    </property>
+    <property name="toolTip">
+     <string>Gives 10 cookies per second.</string>
     </property>
     <property name="text">
      <string>Buy Farm : 100</string>
@@ -79,13 +88,29 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Cookies : 0&lt;/p&gt;&lt;p&gt;Cursors : 0&lt;/p&gt;&lt;p&gt;Grandmas : 0&lt;/p&gt;&lt;p&gt;Farms : 0&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="button_mine">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>300</y>
+      <width>171</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>Gives 50 cookies per second.</string>
+    </property>
+    <property name="text">
+     <string>Buy Mine: 1000</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>384</width>
+     <width>385</width>
      <height>19</height>
     </rect>
    </property>

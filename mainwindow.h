@@ -23,6 +23,7 @@ private slots:
     void addCookie();
     void addItem(QPushButton*button_sender, QString name, int *item, int *item_price);
     void getAutoCookies();
+    void setGameStatus();
 
 private:
     Ui::MainWindow *ui;
@@ -30,9 +31,11 @@ private:
     int cursors = 0;
     int grandmas = 0;
     int farms = 0;
+    int mines = 0;
     int cursor_price = 10;
     int grangma_prise = 25;
     int farm_price = 100;
+    int mine_price = 1000;
     QTimer* timer = nullptr;
 };
 
