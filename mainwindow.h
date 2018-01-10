@@ -19,9 +19,9 @@ public:
     ~MainWindow();
 
 private slots:
-    void getSomeItems();
-    void cookieAdd();
-    void itemAdd(QPushButton*button_sender, QString name, int *item, int *item_price);
+    void getNewItems();
+    void addCookie();
+    void addItem(QPushButton*button_sender, QString name, int *item, int *item_price);
     void getAutoCookies();
 
 private:

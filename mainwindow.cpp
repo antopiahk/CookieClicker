@@ -13,10 +13,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    connect(this->ui->button_cookie, SIGNAL( clicked() ), this, SLOT(cookieAdd()));
-    connect(this->ui->button_cursor, SIGNAL( clicked() ), this, SLOT(getSomeItems()));
-    connect(this->ui->button_grandma, SIGNAL( clicked() ), this, SLOT(getSomeItems()));
-    connect(this->ui->button_farm, SIGNAL( clicked() ), this, SLOT(getSomeItems()));
+    connect(this->ui->button_cookie, SIGNAL( clicked() ), this, SLOT(addCookie()));
+    connect(this->ui->button_cursor, SIGNAL( clicked() ), this, SLOT(getNewItems()));
+    connect(this->ui->button_grandma, SIGNAL( clicked() ), this, SLOT(getNewItems()));
+    connect(this->ui->button_farm, SIGNAL( clicked() ), this, SLOT(getNewItems()));
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(getAutoCookies()));
     timer->start(1000); //time specified in ms
@@ -29,7 +29,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::getSomeItems() {
+void MainWindow::getNewItems() {
     QString name;
     int *item;
     int *item_price;
@@ -54,15 +54,15 @@ void MainWindow::getSomeItems() {
         repeat = 100;
     }
     for (int i = 0; i < repeat; i++) {
-        itemAdd(buttonSender, name, item, item_price);
+        addItem(buttonSender, name, item, item_price);
     }
 }
 
-void MainWindow::cookieAdd() {
+void MainWindow::addCookie() {
     cookies++;
 }
 
-void MainWindow::itemAdd(QPushButton*button_sender, QString name, int* item, int* item_price){
+void MainWindow::addItem(QPushButton*button_sender, QString name, int* item, int* item_price){
     if (cookies >= *item_price) {
         *item = *item + 1;
         cookies -= *item_price;
