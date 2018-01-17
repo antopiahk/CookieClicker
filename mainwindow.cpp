@@ -33,7 +33,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::getNewItems() {
     QString name;
-    int *item;
+    int* item;
     int *item_price;
     QPushButton* buttonSender = qobject_cast<QPushButton*>(sender());
     if (buttonSender == this->ui->button_cursor) {
@@ -43,7 +43,7 @@ void MainWindow::getNewItems() {
     } else if (buttonSender == this->ui->button_grandma) {
         name = "Grandma";
         item = &grandmas;
-        item_price = &grangma_prise;
+        item_price = &grandma_price;
     } else if (buttonSender == this->ui->button_farm) {
         name = "Farm";
         item = &farms;

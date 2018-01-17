@@ -33,7 +33,7 @@ private:
     int farms = 0;
     int mines = 0;
     int cursor_price = 10;
-    int grangma_prise = 25;
+    int grandma_price = 25;
     int farm_price = 100;
     int mine_price = 1000;
     QTimer* timer = nullptr;
