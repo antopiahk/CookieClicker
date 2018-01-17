@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QTimer>
 #include <QPushButton>
+#include <QMouseEvent>
 //#include "timer.h"
 
 namespace Ui {
@@ -19,13 +20,17 @@ public:
     ~MainWindow();
 
 private slots:
-    void getNewItems();
+    void mousePressEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
+    void onItemButtonClick();
+    bool getItem(QPushButton*button_sender, QString name, int *item, int *item_price);
+    bool sellItem(QPushButton*button_sender, QString name, int *item, int *item_price);
     void addCookie();
-    void addItem(QPushButton*button_sender, QString name, int *item, int *item_price);
     void getAutoCookies();
     void setGameStatus();
 
 private:
+    bool rightclick = false;
     Ui::MainWindow *ui;
     int cookies = 0;
     int cursors = 0;
@@ -36,6 +41,7 @@ private:
     int grandma_price = 25;
     int farm_price = 100;
     int mine_price = 1000;
+    int cps = 0;
     QTimer* timer = nullptr;
 };
 

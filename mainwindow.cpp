@@ -14,10 +14,10 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     connect(this->ui->button_cookie, SIGNAL( clicked() ), this, SLOT(addCookie()));
-    connect(this->ui->button_cursor, SIGNAL( clicked() ), this, SLOT(getNewItems()));
-    connect(this->ui->button_grandma, SIGNAL( clicked() ), this, SLOT(getNewItems()));
-    connect(this->ui->button_farm, SIGNAL( clicked() ), this, SLOT(getNewItems()));
-    connect(this->ui->button_mine, SIGNAL( clicked() ), this, SLOT(getNewItems()));
+    connect(this->ui->button_cursor, SIGNAL( clicked() ), this, SLOT(onItemButtonClick()));
+    connect(this->ui->button_grandma, SIGNAL( clicked() ), this, SLOT(onItemButtonClick()));
+    connect(this->ui->button_farm, SIGNAL( clicked() ), this, SLOT(onItemButtonClick()));
+    connect(this->ui->button_mine, SIGNAL( clicked() ), this, SLOT(onItemButtonClick()));
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(getAutoCookies()));
     setGameStatus();
@@ -31,26 +31,38 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::getNewItems() {
+void MainWindow::mousePressEvent(QMouseEvent *event) {
+    if (event->button() == Qt::RightButton) {
+        rightclick = true;
+    }
+}
+
+void MainWindow::mouseReleaseEvent(QMouseEvent *event) {
+    if (event->button() == Qt::RightButton) {
+        rightclick = false;
+    }
+}
+
+void MainWindow::onItemButtonClick() {
     QString name;
-    int* item;
+    int* item_num;
     int *item_price;
     QPushButton* buttonSender = qobject_cast<QPushButton*>(sender());
     if (buttonSender == this->ui->button_cursor) {
         name = "Cursor";
-        item = &cursors;
+        item_num = &cursors;
         item_price = &cursor_price;
     } else if (buttonSender == this->ui->button_grandma) {
         name = "Grandma";
-        item = &grandmas;
+        item_num = &grandmas;
         item_price = &grandma_price;
     } else if (buttonSender == this->ui->button_farm) {
         name = "Farm";
-        item = &farms;
+        item_num = &farms;
         item_price = &farm_price;
     } else if (buttonSender == this->ui->button_mine) {
         name = "Mine";
-        item = &mines;
+        item_num = &mines;
         item_price = &mine_price;
     }
     int repeat = 1;
@@ -59,8 +71,15 @@ void MainWindow::getNewItems() {
     } else if (QApplication::keyboardModifiers().testFlag(Qt::ShiftModifier)) {
         repeat = 100;
     }
-    for (int i = 0; i < repeat; i++) {
-        addItem(buttonSender, name, item, item_price);
+    bool transaction_finished = true;
+    if (rightclick){
+        for (int i = 0; i < repeat && transaction_finished; i++) {
+            transaction_finished = sellItem(buttonSender, name, item_num, item_price);
+        };
+    } else {
+        for (int i = 0; i < repeat && transaction_finished; i++) {
+            transaction_finished = getItem(buttonSender, name, item_num, item_price);
+        }
     }
 }
 
@@ -68,25 +87,41 @@ void MainWindow::addCookie() {
     cookies++;
 }
 
-void MainWindow::addItem(QPushButton*button_sender, QString name, int* item, int* item_price){
+bool MainWindow::getItem(QPushButton*button_sender, QString name, int* item_num, int* item_price){
     if (cookies >= *item_price) {
-        *item = *item + 1;
+        *item_num = *item_num + 1;
         cookies -= *item_price;
         *item_price += ceil(*item_price * 0.05);
         button_sender->setText("Buy " + name + ": " + QString::fromStdString(std::to_string(*item_price)));
+        cps = cursors + 5*grandmas + 10*farms + 50*mines;
+        setGameStatus();
+        return true;
     }
+    return false;
+}
+
+bool MainWindow::sellItem(QPushButton*button_sender, QString name, int* item_num, int* item_price){
+    if (*item_num>0){
+        *item_num = *item_num - 1;
+        cookies += ceil(*item_price/2.0);
+        *item_price = ceil(*item_price * 0.952380952381); // 1/1.05
+        button_sender->setText("Buy " + name + ": " + QString::fromStdString(std::to_string(*item_price)));
+        cps = cursors + 5*grandmas + 10*farms + 50*mines;
+        setGameStatus();
+        return true;
+    }
+    return false;
+
 }
 
 void MainWindow::getAutoCookies(){
     //printf("Some cookies; timer=%p\n", timer); fflush(stdout);
-    int cookies_per_second = cursors + 5*grandmas + 10*farms + 50*mines;
-    cookies = cookies + cookies_per_second;
+    cookies = cookies + cps;
     setGameStatus();
     timer->start(1000); //time specified in ms
 }
 
 void MainWindow::setGameStatus(){
-    int cookies_per_second = cursors + 5*grandmas + 10*farms + 50*mines;
     ui->label->setText("Cookies: " +
                         QString::fromStdString(std::to_string(cookies)) +
                        "\nCursors: " +
@@ -98,5 +133,5 @@ void MainWindow::setGameStatus(){
                        "\nMines: " +
                        QString::fromStdString(std::to_string(mines)) +
                        "\nCookies per second: " +
-                       QString::fromStdString(std::to_string(cookies_per_second)));
+                       QString::fromStdString(std::to_string(cps)));
 }
