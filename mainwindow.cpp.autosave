@@ -31,10 +31,6 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void QPushButton::mousePressEvent(QMouseEvent *event) {
-    this->onItemButtonClick(event);
-}
-
 void MainWindow::onItemButtonClick(QMouseEvent *event) {
     //mousePressEvent(event);
     bool rightclick;

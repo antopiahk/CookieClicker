@@ -1,0 +1,9 @@
+#include "mypushbutton.h"
+
+MyPushButton::MyPushButton(QWidget *parent) : QWidget(parent)
+{
+}
+
+void MyPushButton::mousePressEvent(QMouseEvent *event) {
+    MainWindow-onItemButtonClick(event);
+}

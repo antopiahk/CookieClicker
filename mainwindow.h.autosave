@@ -20,7 +20,6 @@ public:
     ~MainWindow();
 
 private slots:
-    void mousePressEvent(QMouseEvent *event);
     //void mouseReleaseEvent(QMouseEvent *event);
     void onItemButtonClick(QMouseEvent *event);
     bool getItem(QPushButton*button_sender, QString name, int *item, int *item_price);
