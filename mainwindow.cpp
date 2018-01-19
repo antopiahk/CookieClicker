@@ -44,10 +44,12 @@ MainWindow::~MainWindow()
 
 void MainWindow::cheatActivation() {
     if (grandmas != 0) {
-        cookies +=grandmas*100000;
+        cookies +=grandmas*1000000;
         grandmas = 0;
         grandma_price = 25;
+        this->ui->button_grandma->setText("Buy Grandma : " + QString::fromStdString(std::to_string(grandma_price)));
         this->ui->label->setStyleSheet("QLabel { background-color : red; color : white; }");
+        setGameStatus();
     }
 
 }
@@ -179,6 +181,6 @@ void MainWindow::setGameStatus(){
                        QString::fromStdString(std::to_string(farms)) +
                        "\nMines: " +
                        QString::fromStdString(std::to_string(mines)) +
-                       "\nCookies per second: " +
+                       "\nCpS: " +
                        QString::fromStdString(std::to_string(cps)));
 }
