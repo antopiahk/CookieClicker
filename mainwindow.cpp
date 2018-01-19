@@ -15,12 +15,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     connect(this->ui->button_cookie, SIGNAL( clicked() ), this, SLOT(addCookie()));
-
     //connect(this->ui->button_cursor, SIGNAL( clicked() ), this, SLOT(onItemButtonClick()));
     //connect(this->ui->button_grandma, SIGNAL( clicked() ), this, SLOT(onItemButtonClick()));
     //connect(this->ui->button_farm, SIGNAL( clicked() ), this, SLOT(onItemButtonClick()));
     //connect(this->ui->button_mine, SIGNAL( clicked() ), this, SLOT(onItemButtonClick()));
-
     this->ui->button_cursor->installEventFilter(this);
     this->ui->button_grandma->installEventFilter(this);
     this->ui->button_farm->installEventFilter(this);
@@ -44,6 +42,8 @@ bool MainWindow::eventFilter(QObject* target, QEvent* event) {
         auto mouse_event = (QMouseEvent*)event;
         QPushButton* buttonSender;
         if (mouse_event->button() & Qt::RightButton) {
+            QPushButton* buttonSender;
+            printf("right\n");
             if (target == this->ui->button_cursor) {
                 buttonSender = this->ui->button_cursor;
             } else if (target == this->ui->button_grandma) {
