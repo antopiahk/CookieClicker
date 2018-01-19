@@ -84,6 +84,12 @@
       <height>281</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
     <property name="text">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Cookies : 0&lt;/p&gt;&lt;p&gt;Cursors : 0&lt;/p&gt;&lt;p&gt;Grandmas : 0&lt;/p&gt;&lt;p&gt;Farms : 0&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
@@ -111,7 +117,7 @@
      <x>0</x>
      <y>0</y>
      <width>385</width>
-     <height>19</height>
+     <height>17</height>
     </rect>
    </property>
   </widget>

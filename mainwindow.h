@@ -5,6 +5,7 @@
 #include <QTimer>
 #include <QPushButton>
 #include <QMouseEvent>
+#include <QShortcut>
 //#include "timer.h"
 
 namespace Ui {
@@ -29,6 +30,7 @@ private slots:
     void addCookie();
     void getAutoCookies();
     void setGameStatus();
+    void cheatActivation();
 
 private:
     bool rightclick = false;
@@ -43,6 +45,7 @@ private:
     int farm_price = 100;
     int mine_price = 1000;
     int cps = 0;
+    QShortcut* cheatShorcut;
     QTimer* timer = nullptr;
 };
 

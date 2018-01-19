@@ -6,6 +6,7 @@
 #include <QTimer>
 #include <cstdio>
 #include <cmath>
+#include <QShortcut>
 //#include "timer.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -13,6 +14,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    cheatShorcut = new QShortcut(QKeySequence(tr("Ctrl+Shift+Alt+T")), this);
+
+    connect(this->cheatShorcut, SIGNAL(activated()), this, SLOT(cheatActivation()));
 
     connect(this->ui->button_cookie, SIGNAL( clicked() ), this, SLOT(addCookie()));
     //connect(this->ui->button_cursor, SIGNAL( clicked() ), this, SLOT(onItemButtonClick()));
@@ -35,6 +40,16 @@ MainWindow::~MainWindow()
 {
     delete timer;
     delete ui;
+}
+
+void MainWindow::cheatActivation() {
+    if (grandmas != 0) {
+        cookies +=grandmas*100000;
+        grandmas = 0;
+        grandma_price = 25;
+        this->ui->label->setStyleSheet("QLabel { background-color : red; color : white; }");
+    }
+
 }
 
 bool MainWindow::eventFilter(QObject* target, QEvent* event) {
