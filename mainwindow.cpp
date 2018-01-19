@@ -13,11 +13,19 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
     connect(this->ui->button_cookie, SIGNAL( clicked() ), this, SLOT(addCookie()));
-    connect(this->ui->button_cursor, SIGNAL( clicked() ), this, SLOT(onItemButtonClick()));
-    connect(this->ui->button_grandma, SIGNAL( clicked() ), this, SLOT(onItemButtonClick()));
-    connect(this->ui->button_farm, SIGNAL( clicked() ), this, SLOT(onItemButtonClick()));
-    connect(this->ui->button_mine, SIGNAL( clicked() ), this, SLOT(onItemButtonClick()));
+
+    //connect(this->ui->button_cursor, SIGNAL( clicked() ), this, SLOT(onItemButtonClick()));
+    //connect(this->ui->button_grandma, SIGNAL( clicked() ), this, SLOT(onItemButtonClick()));
+    //connect(this->ui->button_farm, SIGNAL( clicked() ), this, SLOT(onItemButtonClick()));
+    //connect(this->ui->button_mine, SIGNAL( clicked() ), this, SLOT(onItemButtonClick()));
+
+    this->ui->button_cursor->installEventFilter(this);
+    this->ui->button_grandma->installEventFilter(this);
+    this->ui->button_farm->installEventFilter(this);
+    this->ui->button_mine->installEventFilter(this);
+
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(getAutoCookies()));
     setGameStatus();
@@ -31,23 +39,47 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::mousePressEvent(QMouseEvent *event) {
-    if (event->button() == Qt::RightButton) {
-        rightclick = true;
+bool MainWindow::eventFilter(QObject* target, QEvent* event) {
+    if (event->type() == QEvent::MouseButtonPress) {
+        auto mouse_event = (QMouseEvent*)event;
+        QPushButton* buttonSender;
+        if (mouse_event->button() & Qt::RightButton) {
+            if (target == this->ui->button_cursor) {
+                buttonSender = this->ui->button_cursor;
+            } else if (target == this->ui->button_grandma) {
+                buttonSender = this->ui->button_grandma;
+            } else if (target == this->ui->button_farm) {
+                buttonSender = this->ui->button_farm;
+            } else {
+                buttonSender = this->ui->button_mine;
+            }
+            this->onItemButtonClick(buttonSender, true);
+            return true;
+        } else if (mouse_event->button() & Qt::LeftButton) {
+            if (target == this->ui->button_cursor) {
+                buttonSender = this->ui->button_cursor;
+            } else if (target == this->ui->button_grandma) {
+                buttonSender = this->ui->button_grandma;
+            } else if (target == this->ui->button_farm) {
+                buttonSender = this->ui->button_farm;
+            } else {
+                buttonSender = this->ui->button_mine;
+            }
+            this->onItemButtonClick(buttonSender, false);
+            return true;
+        }
     }
+    return false;
 }
 
-void MainWindow::mouseReleaseEvent(QMouseEvent *event) {
-    if (event->button() == Qt::RightButton) {
-        rightclick = false;
-    }
-}
 
-void MainWindow::onItemButtonClick() {
+void MainWindow::onItemButtonClick(QPushButton* buttonSender, bool rightclick) {
     QString name;
     int* item_num;
     int *item_price;
-    QPushButton* buttonSender = qobject_cast<QPushButton*>(sender());
+    if (buttonSender == nullptr) {
+        buttonSender = qobject_cast<QPushButton*>(sender());
+    }
     if (buttonSender == this->ui->button_cursor) {
         name = "Cursor";
         item_num = &cursors;
