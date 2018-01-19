@@ -20,9 +20,10 @@ public:
     ~MainWindow();
 
 private slots:
-    void mousePressEvent(QMouseEvent *event);
-    void mouseReleaseEvent(QMouseEvent *event);
-    void onItemButtonClick();
+    //void mousePressEvent(QMouseEvent *event);
+    //void mouseReleaseEvent(QMouseEvent *event);
+    bool eventFilter(QObject *watched, QEvent *event);
+    void onItemButtonClick(QPushButton *buttonSender = nullptr, bool rightclick = false);
     bool getItem(QPushButton*button_sender, QString name, int *item, int *item_price);
     bool sellItem(QPushButton*button_sender, QString name, int *item, int *item_price);
     void addCookie();
