@@ -1,19 +1,22 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <QTextStream>
 #include <QFile>
+#include <QMessageBox>
+#include <QShortcut>
+#include <QTextStream>
 #include <QTime>
 #include <QTimer>
-#include <cstdio>
 #include <cmath>
-#include <QShortcut>
-//#include "timer.h"
+#include <cstdio>
+#include <ctime>
+#include <string>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    srand(time(NULL));
 
     cheatShorcut = new QShortcut(QKeySequence(tr("Ctrl+Shift+Alt+T")), this);
 
@@ -168,6 +171,30 @@ void MainWindow::getAutoCookies(){
     cookies = cookies + cps;
     setGameStatus();
     timer->start(1000); //time specified in ms
+
+    int random = rand() % 100;
+    printf("%d", random);
+    if (random == 0) {
+        catchGoldenCookie();
+    }
+}
+
+void MainWindow::catchGoldenCookie(){
+    golden_cookies++;
+    int random = rand() % 50 + 1;
+    int prize = ceil(cookies * 0.01*random + 1);
+    if (prize == 1) {
+        QMessageBox::information(
+            this,
+            tr("Golden cookie"),
+            tr("You got 1 cookie!") );
+    } else {
+        QMessageBox::information(
+            this,
+            tr("Golden cookie"),
+            QString("You got %1 cookies!").arg(prize) );
+    }
+    cookies = cookies + prize;
 }
 
 void MainWindow::setGameStatus(){
@@ -182,5 +209,7 @@ void MainWindow::setGameStatus(){
                        "\nMines: " +
                        QString::fromStdString(std::to_string(mines)) +
                        "\nCpS: " +
-                       QString::fromStdString(std::to_string(cps)));
+                       QString::fromStdString(std::to_string(cps)) +
+                       "\nGolden cookies caught: " +
+                       QString::fromStdString(std::to_string(golden_cookies)));
 }

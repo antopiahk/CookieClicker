@@ -28,6 +28,7 @@ private slots:
     bool getItem(QPushButton*button_sender, QString name, int *item, int *item_price);
     bool sellItem(QPushButton*button_sender, QString name, int *item, int *item_price);
     void addCookie();
+    void catchGoldenCookie();
     void getAutoCookies();
     void setGameStatus();
     void cheatActivation();
@@ -45,6 +46,7 @@ private:
     int farm_price = 100;
     int mine_price = 1000;
     int cps = 0;
+    int golden_cookies = 0;
     QShortcut* cheatShorcut;
     QTimer* timer = nullptr;
 };
