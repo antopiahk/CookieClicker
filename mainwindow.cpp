@@ -23,17 +23,13 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this->cheatShorcut, SIGNAL(activated()), this, SLOT(cheatActivation()));
 
     connect(this->ui->button_cookie, SIGNAL( clicked() ), this, SLOT(addCookie()));
-    //connect(this->ui->button_cursor, SIGNAL( clicked() ), this, SLOT(onItemButtonClick()));
-    //connect(this->ui->button_grandma, SIGNAL( clicked() ), this, SLOT(onItemButtonClick()));
-    //connect(this->ui->button_farm, SIGNAL( clicked() ), this, SLOT(onItemButtonClick()));
-    //connect(this->ui->button_mine, SIGNAL( clicked() ), this, SLOT(onItemButtonClick()));
     this->ui->button_cursor->installEventFilter(this);
     this->ui->button_grandma->installEventFilter(this);
     this->ui->button_farm->installEventFilter(this);
     this->ui->button_mine->installEventFilter(this);
 
     timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(getAutoCookies()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(timerTick()));
     setGameStatus();
     timer->start(1000); //time specified in ms
 
@@ -57,9 +53,30 @@ void MainWindow::cheatActivation() {
 
 }
 
+void MainWindow::timerTick() {
+    seconds++;
+    getAutoCookies();
+    int random = rand() % 20;
+    //printf("%d", random);
+    if (random == 0 && golden_cookie == nullptr) {
+        callGoldenCookie();
+    }
+    if (seconds == golden_cookie_time_called + golden_cookie_lifetime &&
+            golden_cookie != nullptr) {
+        withdrawGoldenCookie();
+    }
+    timer->start(1000); //time specified in ms
+}
+
 bool MainWindow::eventFilter(QObject* target, QEvent* event) {
+    auto mouse_event = (QMouseEvent*)event;
+    if (event->type() == QEvent::MouseButtonPress &&
+            mouse_event->button() & Qt::LeftButton &&
+            target == golden_cookie) {
+        catchGoldenCookie();
+        return true;
+    }
     if (event->type() == QEvent::MouseButtonPress) {
-        auto mouse_event = (QMouseEvent*)event;
         QPushButton* buttonSender;
         if (mouse_event->button() & Qt::RightButton) {
             QPushButton* buttonSender;
@@ -166,17 +183,29 @@ bool MainWindow::sellItem(QPushButton*button_sender, QString name, int* item_num
 
 }
 
-void MainWindow::getAutoCookies(){
-    //printf("Some cookies; timer=%p\n", timer); fflush(stdout);
-    cookies = cookies + cps;
-    setGameStatus();
-    timer->start(1000); //time specified in ms
+void MainWindow::callGoldenCookie() {
+    const int gc_width = 40;
+    const int gc_height = 40;
+    QSize sz = size();
 
-    int random = rand() % 100;
-    printf("%d", random);
-    if (random == 0) {
-        catchGoldenCookie();
-    }
+    golden_cookie_time_called = seconds;
+    golden_cookie_lifetime = 3 + rand() % 8;
+
+    int nx = rand()%(sz.width() - gc_width);
+    int ny = rand()%(sz.height() - gc_height);
+
+
+    golden_cookie = new QPushButton(ui->centralWidget);
+    golden_cookie->setObjectName(QStringLiteral("random_button"));
+    golden_cookie->setText(QStringLiteral("Eat me!"));
+    golden_cookie->setGeometry(QRect(nx, ny, gc_width, gc_height));
+    golden_cookie->show();
+    golden_cookie->installEventFilter(this);
+}
+
+void MainWindow::withdrawGoldenCookie() {
+    delete golden_cookie;
+    golden_cookie = nullptr;
 }
 
 void MainWindow::catchGoldenCookie(){
@@ -195,6 +224,13 @@ void MainWindow::catchGoldenCookie(){
             QString("You got %1 cookies!").arg(prize) );
     }
     cookies = cookies + prize;
+    withdrawGoldenCookie();
+}
+
+void MainWindow::getAutoCookies(){
+    //printf("Some cookies; timer=%p\n", timer); fflush(stdout);
+    cookies = cookies + cps;
+    setGameStatus();
 }
 
 void MainWindow::setGameStatus(){
