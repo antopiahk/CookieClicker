@@ -56,12 +56,12 @@ void MainWindow::cheatActivation() {
 void MainWindow::timerTick() {
     seconds++;
     getAutoCookies();
-    int random = rand() % 20;
+    int random = rand() % 1;
     //printf("%d", random);
     if (random == 0 && golden_cookie == nullptr) {
         callGoldenCookie();
     }
-    if (seconds == golden_cookie_time_called + golden_cookie_lifetime &&
+    if (seconds >= golden_cookie_time_called + golden_cookie_lifetime &&
             golden_cookie != nullptr) {
         withdrawGoldenCookie();
     }
@@ -196,7 +196,7 @@ void MainWindow::callGoldenCookie() {
 
 
     golden_cookie = new QPushButton(ui->centralWidget);
-    golden_cookie->setObjectName(QStringLiteral("random_button"));
+    golden_cookie->setObjectName(QStringLiteral("golden_cookie"));
     golden_cookie->setText(QStringLiteral("Eat me!"));
     golden_cookie->setGeometry(QRect(nx, ny, gc_width, gc_height));
     golden_cookie->show();
