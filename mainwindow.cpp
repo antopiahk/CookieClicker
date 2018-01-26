@@ -1,20 +1,23 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <QTextStream>
 #include <QFile>
+#include <QMessageBox>
+#include <QShortcut>
+#include <QTextStream>
 #include <QTime>
 #include <QTimer>
-#include <cstdio>
-#include <cmath>
 #include <QShortcut>
+#include <cmath>
 #include <ctime>
-//#include "timer.h"
+#include <cstdio>
+#include <string>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    srand(time(NULL));
 
     srand(time(NULL));
 
@@ -29,8 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->ui->button_mine->installEventFilter(this);
 
     timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(getAutoCookies()));
-    connect(timer, SIGNAL(timeout()), this, SLOT(callGoldenCookie()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(timerTick()));
     setGameStatus();
     timer->start(1000); //time specified in ms
 
@@ -55,9 +57,30 @@ void MainWindow::cheatActivation() {
 
 }
 
+void MainWindow::timerTick() {
+    seconds++;
+    getAutoCookies();
+    int random = rand() % 1;
+    //printf("%d", random);
+    if (random == 0 && golden_cookie == nullptr) {
+        callGoldenCookie();
+    }
+    if (seconds >= golden_cookie_time_called + golden_cookie_lifetime &&
+            golden_cookie != nullptr) {
+        withdrawGoldenCookie();
+    }
+    timer->start(1000); //time specified in ms
+}
+
 bool MainWindow::eventFilter(QObject* target, QEvent* event) {
+    auto mouse_event = (QMouseEvent*)event;
+    if (event->type() == QEvent::MouseButtonPress &&
+            mouse_event->button() & Qt::LeftButton &&
+            target == golden_cookie) {
+        catchGoldenCookie();
+        return true;
+    }
     if (event->type() == QEvent::MouseButtonPress) {
-        auto mouse_event = (QMouseEvent*)event;
         QPushButton* buttonSender;
         if (mouse_event->button() & Qt::RightButton) {
             QPushButton* buttonSender;
@@ -167,17 +190,54 @@ bool MainWindow::sellItem(QPushButton*button_sender, QString name, int* item_num
 
 }
 
+void MainWindow::callGoldenCookie() {
+    const int gc_width = 40;
+    const int gc_height = 40;
+    QSize sz = size();
+
+    golden_cookie_time_called = seconds;
+    golden_cookie_lifetime = 3 + rand() % 8;
+
+    int nx = rand()%(sz.width() - gc_width);
+    int ny = rand()%(sz.height() - gc_height);
+
+
+    golden_cookie = new QPushButton(ui->centralWidget);
+    golden_cookie->setObjectName(QStringLiteral("golden_cookie"));
+    golden_cookie->setText(QStringLiteral("Eat me!"));
+    golden_cookie->setGeometry(QRect(nx, ny, gc_width, gc_height));
+    golden_cookie->show();
+    golden_cookie->installEventFilter(this);
+}
+
+void MainWindow::withdrawGoldenCookie() {
+    delete golden_cookie;
+    golden_cookie = nullptr;
+}
+
+void MainWindow::catchGoldenCookie(){
+    golden_cookies++;
+    int random = rand() % 50 + 1;
+    int prize = ceil(cookies * 0.01*random + 1);
+    if (prize == 1) {
+        QMessageBox::information(
+            this,
+            tr("Golden cookie"),
+            tr("You got 1 cookie!") );
+    } else {
+        QMessageBox::information(
+            this,
+            tr("Golden cookie"),
+            QString("You got %1 cookies!").arg(prize) );
+    }
+    cookies = cookies + prize;
+    withdrawGoldenCookie();
+}
+
 void MainWindow::getAutoCookies(){
     cookies = cookies + cps;
     setGameStatus();
     timer->start(1000); //time specified in ms
-    if (button_goldencookie!=nullptr){
-        timechecker++;
-        if (timechecker==gclifetime){
-            withdrawGoldenCookie();
-            timechecker=0;
-        }
-    }
 }
 
 void MainWindow::setGameStatus(){
@@ -192,7 +252,9 @@ void MainWindow::setGameStatus(){
                        "\nMines: " +
                        QString::fromStdString(std::to_string(mines)) +
                        "\nCpS: " +
-                       QString::fromStdString(std::to_string(cps)));
+                       QString::fromStdString(std::to_string(cps)) +
+                       "\nGolden cookies caught: " +
+                       QString::fromStdString(std::to_string(golden_cookies)));
 }
 
 void MainWindow::callGoldenCookie(){
