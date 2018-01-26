@@ -7,6 +7,7 @@
 #include <cstdio>
 #include <cmath>
 #include <QShortcut>
+#include <ctime>
 //#include "timer.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -15,15 +16,13 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    srand(time(NULL));
+
+
     cheatShorcut = new QShortcut(QKeySequence(tr("Ctrl+Shift+Alt+T")), this);
 
     connect(this->cheatShorcut, SIGNAL(activated()), this, SLOT(cheatActivation()));
-
     connect(this->ui->button_cookie, SIGNAL( clicked() ), this, SLOT(addCookie()));
-    //connect(this->ui->button_cursor, SIGNAL( clicked() ), this, SLOT(onItemButtonClick()));
-    //connect(this->ui->button_grandma, SIGNAL( clicked() ), this, SLOT(onItemButtonClick()));
-    //connect(this->ui->button_farm, SIGNAL( clicked() ), this, SLOT(onItemButtonClick()));
-    //connect(this->ui->button_mine, SIGNAL( clicked() ), this, SLOT(onItemButtonClick()));
     this->ui->button_cursor->installEventFilter(this);
     this->ui->button_grandma->installEventFilter(this);
     this->ui->button_farm->installEventFilter(this);
@@ -31,6 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(getAutoCookies()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(callGoldenCookie()));
     setGameStatus();
     timer->start(1000); //time specified in ms
 
@@ -49,6 +49,7 @@ void MainWindow::cheatActivation() {
         grandma_price = 25;
         this->ui->button_grandma->setText("Buy Grandma : " + QString::fromStdString(std::to_string(grandma_price)));
         this->ui->label->setStyleSheet("QLabel { background-color : red; color : white; }");
+        cps = cursors + 5*grandmas + 10*farms + 50*mines;
         setGameStatus();
     }
 
@@ -79,6 +80,9 @@ bool MainWindow::eventFilter(QObject* target, QEvent* event) {
                 buttonSender = this->ui->button_grandma;
             } else if (target == this->ui->button_farm) {
                 buttonSender = this->ui->button_farm;
+            } else if (target == this->button_goldencookie) {
+                goldenCookie();
+                return true;
             } else {
                 buttonSender = this->ui->button_mine;
             }
@@ -164,10 +168,16 @@ bool MainWindow::sellItem(QPushButton*button_sender, QString name, int* item_num
 }
 
 void MainWindow::getAutoCookies(){
-    //printf("Some cookies; timer=%p\n", timer); fflush(stdout);
     cookies = cookies + cps;
     setGameStatus();
     timer->start(1000); //time specified in ms
+    if (button_goldencookie!=nullptr){
+        timechecker++;
+        if (timechecker==gclifetime){
+            withdrawGoldenCookie();
+            timechecker=0;
+        }
+    }
 }
 
 void MainWindow::setGameStatus(){
@@ -183,4 +193,29 @@ void MainWindow::setGameStatus(){
                        QString::fromStdString(std::to_string(mines)) +
                        "\nCpS: " +
                        QString::fromStdString(std::to_string(cps)));
+}
+
+void MainWindow::callGoldenCookie(){
+    int goldencookienum = rand()%1;
+    int gcwidth = 80, gcheight = 40;
+    if (goldencookienum==0 && button_goldencookie==nullptr){
+        button_goldencookie = new QPushButton(ui->centralWidget);
+        this->button_goldencookie->installEventFilter(this);
+        button_goldencookie->setText("EAT ME!");
+        int x,y;
+        x=rand()%(size().width()-gcwidth);
+        y=rand()%(size().height()-gcheight);
+        button_goldencookie->setGeometry(x,y,gcwidth,gcheight);
+        button_goldencookie->show();
+        gclifetime = rand()%8+3;
+    }
+}
+void MainWindow::withdrawGoldenCookie(){
+    delete button_goldencookie;
+    button_goldencookie = nullptr;
+
+}
+void MainWindow::goldenCookie(){
+    cookies+=ceil(1+cookies/4.0);
+    withdrawGoldenCookie();
 }

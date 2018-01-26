@@ -31,6 +31,10 @@ private slots:
     void getAutoCookies();
     void setGameStatus();
     void cheatActivation();
+    void goldenCookie();
+    void callGoldenCookie();
+    void withdrawGoldenCookie();
+
 
 private:
     bool rightclick = false;
@@ -47,6 +51,9 @@ private:
     int cps = 0;
     QShortcut* cheatShorcut;
     QTimer* timer = nullptr;
+    QPushButton* button_goldencookie = nullptr;
+    int timechecker = 0;
+    int gclifetime;
 };
 
 #endif // MAINWINDOW_H
