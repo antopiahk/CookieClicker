@@ -33,16 +33,19 @@ private slots:
     bool sellItem(QPushButton*button_sender, QString name, int *item, int *item_price);
     void addCookie();
     void getAutoCookies();
+    void autoPlay();
 
     void callGoldenCookie();
     void withdrawGoldenCookie();
     void catchGoldenCookie();
 
-    void cheatActivation();
+    void evilCheatActivation();
+    void goldenCheatActivation();
+    void autoPlayCheatActivation();
 
 
 private:
-    bool rightclick = false;
+    bool autoplay = false;
     Ui::MainWindow *ui;
 
     int cookies = 0;
@@ -64,7 +67,9 @@ private:
     int golden_cookie_lifetime = 0;
 
     QPushButton* golden_cookie = nullptr;
-    QShortcut* cheatShorcut;
+    QShortcut* evilCheatShortcut;
+    QShortcut* goldenCheatShortcut;
+    QShortcut* autoPlayCheatShortcut;
     QTimer* timer = nullptr;
     int gclifetime;
 };

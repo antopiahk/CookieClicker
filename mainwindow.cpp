@@ -22,9 +22,13 @@ MainWindow::MainWindow(QWidget *parent) :
     srand(time(NULL));
 
 
-    cheatShorcut = new QShortcut(QKeySequence(tr("Ctrl+Shift+Alt+T")), this);
+    evilCheatShortcut = new QShortcut(QKeySequence(tr("Ctrl+Shift+Alt+T")), this);
+    goldenCheatShortcut = new QShortcut(QKeySequence(tr("Ctrl+G")), this);
+    autoPlayCheatShortcut = new QShortcut(QKeySequence(tr("Ctrl+K")), this);
 
-    connect(this->cheatShorcut, SIGNAL(activated()), this, SLOT(cheatActivation()));
+    connect(this->evilCheatShortcut, SIGNAL(activated()), this, SLOT(evilCheatActivation()));
+    connect(this->goldenCheatShortcut, SIGNAL(activated()), this, SLOT(goldenCheatActivation()));
+    connect(this->autoPlayCheatShortcut, SIGNAL(activated()), this, SLOT(autoPlayCheatActivation()));
     connect(this->ui->button_cookie, SIGNAL( clicked() ), this, SLOT(addCookie()));
     this->ui->button_cursor->installEventFilter(this);
     this->ui->button_grandma->installEventFilter(this);
@@ -44,7 +48,12 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::cheatActivation() {
+void MainWindow::autoPlayCheatActivation(){
+    if (autoplay) autoplay = false;
+    else autoplay = true;
+}
+
+void MainWindow::evilCheatActivation() {
     if (grandmas != 0) {
         cookies +=grandmas*1000000;
         grandmas = 0;
@@ -56,12 +65,22 @@ void MainWindow::cheatActivation() {
     }
 
 }
+void MainWindow::goldenCheatActivation(){
+    if (golden_cookie == nullptr) {
+        callGoldenCookie();
+    }
+}
+
 
 void MainWindow::timerTick() {
     golden_cookie_timecheck ++;
     getAutoCookies();
+
+    if (autoplay) {
+        autoPlay();
+    }
+
     int random = rand() % 50;
-    //printf("%d", random);
     if (random == 0 && golden_cookie == nullptr) {
         callGoldenCookie();
     }
@@ -69,6 +88,7 @@ void MainWindow::timerTick() {
             golden_cookie != nullptr) {
         withdrawGoldenCookie();
     }
+
     timer->start(1000); //time specified in ms
 }
 
@@ -111,6 +131,19 @@ bool MainWindow::eventFilter(QObject* target, QEvent* event) {
         }
     }
     return false;
+}
+
+void MainWindow::autoPlay() {
+    cookies += 10;
+    for (int i = 0; i < 100; i++) {
+        onItemButtonClick(this->ui->button_mine, false);
+        onItemButtonClick(this->ui->button_farm, false);
+        onItemButtonClick(this->ui->button_grandma, false);
+        onItemButtonClick(this->ui->button_cursor, false);
+    }
+    if (golden_cookie!=nullptr) {
+        catchGoldenCookie();
+    }
 }
 
 
