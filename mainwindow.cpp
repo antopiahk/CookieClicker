@@ -58,14 +58,14 @@ void MainWindow::cheatActivation() {
 }
 
 void MainWindow::timerTick() {
-    seconds++;
+    golden_cookie_timecheck ++;
     getAutoCookies();
-    int random = rand() % 1;
+    int random = rand() % 50;
     //printf("%d", random);
     if (random == 0 && golden_cookie == nullptr) {
         callGoldenCookie();
     }
-    if (seconds >= golden_cookie_time_called + golden_cookie_lifetime &&
+    if (golden_cookie_timecheck >= golden_cookie_lifetime &&
             golden_cookie != nullptr) {
         withdrawGoldenCookie();
     }
@@ -103,9 +103,6 @@ bool MainWindow::eventFilter(QObject* target, QEvent* event) {
                 buttonSender = this->ui->button_grandma;
             } else if (target == this->ui->button_farm) {
                 buttonSender = this->ui->button_farm;
-            } else if (target == this->button_goldencookie) {
-                goldenCookie();
-                return true;
             } else {
                 buttonSender = this->ui->button_mine;
             }
@@ -191,21 +188,21 @@ bool MainWindow::sellItem(QPushButton*button_sender, QString name, int* item_num
 }
 
 void MainWindow::callGoldenCookie() {
-    const int gc_width = 40;
+    const int gc_width = 80;
     const int gc_height = 40;
     QSize sz = size();
 
-    golden_cookie_time_called = seconds;
+    golden_cookie_timecheck = 0;
     golden_cookie_lifetime = 3 + rand() % 8;
 
-    int nx = rand()%(sz.width() - gc_width);
-    int ny = rand()%(sz.height() - gc_height);
+    int x = rand()%(sz.width() - gc_width);
+    int y = rand()%(sz.height() - gc_height);
 
 
     golden_cookie = new QPushButton(ui->centralWidget);
     golden_cookie->setObjectName(QStringLiteral("golden_cookie"));
     golden_cookie->setText(QStringLiteral("Eat me!"));
-    golden_cookie->setGeometry(QRect(nx, ny, gc_width, gc_height));
+    golden_cookie->setGeometry(QRect(x, y, gc_width, gc_height));
     golden_cookie->show();
     golden_cookie->installEventFilter(this);
 }
@@ -255,29 +252,4 @@ void MainWindow::setGameStatus(){
                        QString::fromStdString(std::to_string(cps)) +
                        "\nGolden cookies caught: " +
                        QString::fromStdString(std::to_string(golden_cookies)));
-}
-
-void MainWindow::callGoldenCookie(){
-    int goldencookienum = rand()%1;
-    int gcwidth = 80, gcheight = 40;
-    if (goldencookienum==0 && button_goldencookie==nullptr){
-        button_goldencookie = new QPushButton(ui->centralWidget);
-        this->button_goldencookie->installEventFilter(this);
-        button_goldencookie->setText("EAT ME!");
-        int x,y;
-        x=rand()%(size().width()-gcwidth);
-        y=rand()%(size().height()-gcheight);
-        button_goldencookie->setGeometry(x,y,gcwidth,gcheight);
-        button_goldencookie->show();
-        gclifetime = rand()%8+3;
-    }
-}
-void MainWindow::withdrawGoldenCookie(){
-    delete button_goldencookie;
-    button_goldencookie = nullptr;
-
-}
-void MainWindow::goldenCookie(){
-    cookies+=ceil(1+cookies/4.0);
-    withdrawGoldenCookie();
 }

@@ -39,9 +39,6 @@ private slots:
     void catchGoldenCookie();
 
     void cheatActivation();
-    void goldenCookie();
-    void callGoldenCookie();
-    void withdrawGoldenCookie();
 
 
 private:
@@ -60,18 +57,15 @@ private:
     int farm_price = 100;
     int mine_price = 1000;
 
-    int seconds = 0;
     int cps = 0;
     int golden_cookies = 0;
 
-    int golden_cookie_time_called = 0;
+    int golden_cookie_timecheck = 0;
     int golden_cookie_lifetime = 0;
 
     QPushButton* golden_cookie = nullptr;
     QShortcut* cheatShorcut;
     QTimer* timer = nullptr;
-    QPushButton* button_goldencookie = nullptr;
-    int timechecker = 0;
     int gclifetime;
 };
 
