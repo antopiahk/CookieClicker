@@ -36,8 +36,8 @@ private slots:
     void autoPlay();
 
     void callGoldenCookie();
-    void withdrawGoldenCookie();
-    void catchGoldenCookie();
+    void withdrawGoldenCookie(int gc_num);
+    void catchGoldenCookie(int gc_num);
 
     void evilCheatActivation();
     void goldenCheatActivation();
@@ -47,6 +47,7 @@ private slots:
 private:
     bool autoplay = false;
     Ui::MainWindow *ui;
+    static const int max_gc_number = 100;
 
     int cookies = 0;
 
@@ -61,17 +62,18 @@ private:
     int mine_price = 1000;
 
     int cps = 0;
-    int golden_cookies = 0;
+    int created_golden_cookies = 0;
+    int caught_golden_cookies = 0;
 
-    int golden_cookie_timecheck = 0;
-    int golden_cookie_lifetime = 0;
+    int gc_timecheck[max_gc_number];
+    int gc_lifetime[max_gc_number];
 
-    QPushButton* golden_cookie = nullptr;
+    QPushButton* golden_cookie;
+    QPushButton* golden_cookies[max_gc_number];
     QShortcut* evilCheatShortcut;
     QShortcut* goldenCheatShortcut;
     QShortcut* autoPlayCheatShortcut;
     QTimer* timer = nullptr;
-    int gclifetime;
 };
 
 #endif // MAINWINDOW_H
